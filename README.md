@@ -75,6 +75,8 @@ From the repository root:
 
 ```bash
 pixi install --locked -e nba
+pixi run -e nba python -m ensurepip
+pixi run -e nba python -m pip install --no-deps --no-build-isolation .
 pixi run -e nba jupyter
 ```
 
@@ -82,91 +84,63 @@ Use the Python kernel from that environment. Do not use a global Python or a
 teammate's absolute environment path. Other CPU architectures require a team
 manifest/lock update first. See [CONTRIBUTING.md](CONTRIBUTING.md) for branches,
 reviews, notebook editing, and local-file rules.
+Reinstall the package with the same pip command after changing its Python files.
 
 ## Files and unfinished coursework
 
-- `warm_up.ipynb`, `nba/data_loader.py`, `.pre-commit-config.yaml`: original teaching material, unchanged.
+- `warm_up.ipynb`: database entry prepared; coursework questions remain for their owners.
+- `nba/data_loader.py`: public dataset download and read-only connection helper.
+- `.pre-commit-config.yaml`: teaching hooks, with Click in the mypy environment.
 - `nba/wrangling.py`, `nba/visualisation.py`: intentionally EMPTY function modules.
 - `queries/insight_1.sql` through `insight_4.sql`: intentionally EMPTY query files.
 - `analysis.ipynb`: valid empty notebook for the final four-or-more insights.
-- `docs/data_loader_notes.md`: intentionally EMPTY explanations.
-- `pyproject.toml`: intentionally EMPTY coursework placeholder; the package is NOT yet installable.
+- `docs/data_loader_notes.md`: data download, connection, and verification instructions.
+- `pyproject.toml`: package metadata for installation.
 - `figures/` and `data/`: final exports and local downloaded data respectively.
 
-Run commands from the repository root until packaging is completed. The existing
-`pixi.toml` works independently of the empty `pyproject.toml`; do not run `pip install -e .`
-until the packaging owner completes it. Each insight author supplies their query,
+Run commands from the repository root. See [data entry notes](docs/data_loader_notes.md)
+for download and verification. Each insight author supplies their query,
 appropriate figure, modular functions, and explanation. The integrator assembles
-them in `analysis.ipynb`. No NBA analysis or data download is performed by this setup.
+them in `analysis.ipynb`.
 
-The original hook configuration is provided upstream. Each member can install it with
+The hook configuration is provided upstream. Each member can install it with
 `pixi run -e nba pre-commit install`; existing coursework may require fixes before
 all hooks pass. Do not confuse environment verification with assignment completion.
 Keep each member's Kaggle token local and never commit or paste it into PRs.
+Run the checks manually with `pixi run -e nba pre-commit run --all-files`.
 
 
 ## Setup verification
 
-Verified on 2026-11-03 with Python 3.12.16 on macOS Apple Silicon.
-Checks passed: notebook valid: warm_up.ipynb; notebook valid: analysis.ipynb; headless PNG rendering; SQLite/DuckDB in-memory queries and empty package modules import; original loader --help and provided hook configuration validate; no credentials used; fresh Jupyter kernel executes disposable Python/pandas cell.
-Other platforms were lock-resolved only. No coursework analysis, answers,
-model training, or Kaggle data download was performed.
+Verified on 2026-11-04 on macOS Apple Silicon with Python 3.12.16 and pandas
+2.3.3. The teacher's dependency configuration and committed lock file are retained.
 
-## Original repository instructions (retained)
+- Locked environment installation and standard package installation pass.
+- The installed package imports outside the repository.
+- Anonymous download and extraction of the actual Kaggle database pass.
+- The read-only connection reads the `game` table (65,698 rows in this copy).
+- Both notebooks validate; headless plotting, SQLite/DuckDB checks, and a fresh
+  Jupyter kernel with the intended interpreter and a real-data query pass.
+- Eight focused data-entry tests and all configured pre-commit hooks pass.
+- A clean source copy without local environments or data installs using the
+  README commands and passes package imports, tests, plotting and kernel checks
+  against the separately held local database.
 
-# PS 2 Ex 3
+Other platforms are dependency-resolved, not runtime-tested. The remaining
+warm-up questions, four insights, and final analysis notebook remain for their
+assigned authors. See the data notes for the verified database hash.
 
-# Setup
+## Getting the data
 
-## Environment
-
-This project uses [Pixi](https://pixi.sh) for the environment. Install Pixi if you
-do not have it yet, then from the repository root run:
-
-```bash
-pixi install
-```
-
-Activate the environment by running:
-
-```bash
-pixi shell
-```
-
-You can also run commands without activating the shell, for example
-`pixi run python nba/data_loader.py ...`.
-
-## Pre-commit
-
-This repository uses pre-commit to run some checks before each commit. To install pre-commit, run:
+Follow [the data entry notes](docs/data_loader_notes.md) to download the public
+dataset; local Kaggle credentials are only needed if access requires them.
+The notebook expects `data/nba.sqlite` when launched from the repository root.
 
 ```bash
-pixi run pre-commit install
+pixi run -e nba python -m nba.data_loader
+pixi run -e nba validate --data data/nba.sqlite
+pixi run -e nba jupyter
 ```
 
-To run the checks manually, run:
-
-```bash
-pixi run pre-commit run --all-files
-```
-
-# Getting the data
-
-1. create a Kaggle account: https://www.kaggle.com/
-2. get API keys and user name
-   - Go to your account, and click on your profile in the top right
-   - Then click on "Settings"
-   - Scroll down to the API section and click on "Create New Token"
-   - Get your username and API key from there
-
-We have written a data loader function for you in the "nba/data_loader.py".This allows you to
-download the data with by running the script from the terminal. Run the following command in the
-terminal being at the root of the repository.
-
-```bash
-pixi run python nba/data_loader.py -u "your_user_name" -k "your_api_key" -d "wyattowalsh/basketball"
-```
-
-Replace "your_user_name" and "your_api_key" with your username and API key. This creates a json
-file at "~/.kaggle/kaggle.json" with your username and API key, which is used to authenticate your
-account and download the data.
+The database is ignored by Git. Each member downloads a local copy or receives
+the same file from a teammate; a fork or clone contains code, not the database.

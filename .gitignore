@@ -77,6 +77,7 @@ tmp/
 *.log
 
 # Local datasets and databases; existing tracked course data is retained
+/data/
 *.csv
 *.sqlite
 *.sqlite3
