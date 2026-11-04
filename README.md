@@ -71,13 +71,16 @@ resolved: macOS Apple Silicon, macOS Intel, Linux x86-64, and Windows x86-64.
 Runtime validation is performed on macOS Apple Silicon; other platforms are
 dependency-resolved, not runtime-tested. Install Pixi from https://pixi.sh/ .
 
-From the repository root:
+Each member should install Git and Pixi, fork the current group `main`, and clone
+their fork. Each clone needs its own environment and installed Git hook. From
+the repository root:
 
 ```bash
 pixi install --locked -e nba
 pixi run -e nba python -m ensurepip
 pixi run -e nba python -m pip install --no-deps --no-build-isolation .
-pixi run -e nba jupyter
+pixi run -e nba pre-commit install
+pixi run -e nba pre-commit run --all-files
 ```
 
 Use the Python kernel from that environment. Do not use a global Python or a
@@ -85,6 +88,13 @@ teammate's absolute environment path. Other CPU architectures require a team
 manifest/lock update first. See [CONTRIBUTING.md](CONTRIBUTING.md) for branches,
 reviews, notebook editing, and local-file rules.
 Reinstall the package with the same pip command after changing its Python files.
+The first pre-commit run downloads its own check environments and needs internet
+access. The committed hook configuration does not install hooks in another clone.
+
+The assignment also explicitly asks each member to create a Kaggle account and
+generate an API key. Complete that step privately even though the public download
+below currently works without login. Do not share or commit the key. Environment
+verification does not verify completion of that personal coursework step.
 
 ## Files and unfinished coursework
 

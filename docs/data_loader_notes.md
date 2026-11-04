@@ -10,7 +10,9 @@ pixi run -e nba python -m nba.data_loader
 
 The loader downloads the public compressed archive from Kaggle, extracts only
 `nba.sqlite`, validates it, and places it in `data/`. It requires no Kaggle
-credentials. It refuses to overwrite an existing database; move or rename an
+credentials for the current public endpoint. The assignment separately requires
+a Kaggle account and generated API key; anonymous download does not replace that
+personal setup task. It refuses to overwrite an existing database; move or rename an
 old copy if you deliberately want a new one. Allow enough disk space for both
 the archive and extracted database: the archive observed in November 2026 was
 about 731 MB and the database about 2.35 GB; sizes can change.
