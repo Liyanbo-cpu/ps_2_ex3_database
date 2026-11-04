@@ -1,5 +1,70 @@
 # PS2 Exercise 3 — collaboration setup
 
+## 组员先看：本机安装与验证
+
+**每个人在自己的 clone 中执行一次以下步骤，再开始自己的分析。** 第3题使用
+Pixi 的 `nba` 环境（Python 3.12）；分工表在本节之后。
+
+### 1. 准备自己的仓库
+
+先安装 Git 和 [Pixi](https://pixi.sh/latest/installation/)，将
+[小组仓库](https://github.com/starries-creator/ps_2_ex3_database)的最新 `main`
+fork 到自己的账号，再 clone 自己的 fork。已有 fork 的同学先同步小组 `main`。
+以下所有命令均在仓库根目录运行，即包含 `pixi.toml` 的目录。
+
+作业另行要求创建 Kaggle 账号并生成 API key，请自行私下完成；不要提交或分享
+密钥。当前公开下载可以匿名完成，但这不能代替作业中的账号要求。
+
+### 2. 安装环境、项目包和 pre-commit
+
+按顺序执行：
+
+```bash
+pixi install --locked -e nba
+pixi run -e nba python -m ensurepip
+pixi run -e nba python -m pip install --no-deps --no-build-isolation .
+pixi run -e nba pre-commit install
+pixi run -e nba pre-commit run --all-files
+```
+
+最后一条应全部通过。首次运行 pre-commit 会联网下载检查工具，请等待完成。
+每个 clone 都要安装 hooks；其他同学安装过不会自动替你安装。
+
+### 3. 获取数据库并验证
+
+数据库不包含在 fork/clone 中。**没有 `data/nba.sqlite` 时**运行：
+
+```bash
+pixi run -e nba python -m nba.data_loader
+```
+
+也可以接收组员分享的同一份 `nba.sqlite`，放到 `data/` 后跳过下载。已有文件时
+下载器会拒绝覆盖。下载时需要同时容纳约 0.73 GB 压缩包和 2.35 GB 数据库，
+另留环境安装空间。然后运行：
+
+```bash
+pixi run -e nba validate --data data/nba.sqlite
+```
+
+检查应通过，并显示 `game` 表行数和数据库 SHA-256。整合分析前，按
+[数据入口说明](docs/data_loader_notes.md)核对组员使用的文件相同。
+`.csv`、`.sqlite` 和本地 `data/` 已被 Git 忽略，不要强制提交数据库。
+
+### 4. 开始自己的工作
+
+```bash
+pixi run -e nba jupyter
+```
+
+选择本仓库 `nba` 环境的 Python 内核，打开 `warm_up.ipynb`，先运行前两个代码
+单元确认数据入口。后续 TODO 和洞见分析由对应成员完成。编辑项目 Python 文件后，
+再次运行第2步的包安装命令，以更新已安装的包。
+
+本机验证平台为 macOS Apple Silicon；其他已列平台仅完成锁文件依赖解析。
+完成上述安装即可开始分析；后面的分工表与详细说明供工作时查阅。
+
+---
+
 <!-- PS2_FINAL_TEAM_PLAN_START -->
 ## PS2 最终分工与前置顺序
 
@@ -65,6 +130,9 @@ C先提供可复现的下载/建库步骤和数据库入口；A-E在本机确认
 <!-- PS2_FINAL_TEAM_PLAN_END -->
 
 ## Start here
+
+For the complete per-clone command sequence, use the installation guide at the
+top of this README. The details below explain the environment and file roles.
 
 The PS2 setup uses Python 3.12 and a committed lock file. Four platforms are
 resolved: macOS Apple Silicon, macOS Intel, Linux x86-64, and Windows x86-64.
@@ -135,6 +203,9 @@ Verified on 2026-11-04 on macOS Apple Silicon with Python 3.12.16 and pandas
 - A clean source copy without local environments or data installs using the
   README commands and passes package imports, tests, plotting and kernel checks
   against the separately held local database.
+- A fresh clone from remote `main` also passes the same install commands,
+  pre-commit with an independent cache, an actual local commit invoking its hook,
+  all eight tests, its own anonymous database download and the data/kernel checks.
 
 Other platforms are dependency-resolved, not runtime-tested. The remaining
 warm-up questions, four insights, and final analysis notebook remain for their
