@@ -20,14 +20,17 @@ def three_point_trend(connection: sqlite3.Connection) -> pd.DataFrame:
     return trend
 
 
-def three_point_summary(trend: pd.DataFrame) -> dict[str, float | str]:
+def three_point_summary(
+    trend: pd.DataFrame,
+) -> dict[str, float | int | str]:
     """Summarise the first-to-last season change in three-point shooting."""
-    if trend.empty:
+    observed = trend.dropna(subset=["avg_three_pa_per_team_game"])
+    if observed.empty:
         raise ValueError(
             "No seasons with three-point attempt data were found."
         )
-    first = trend.iloc[0]
-    last = trend.iloc[-1]
+    first = observed.iloc[0]
+    last = observed.iloc[-1]
     return {
         "first_season": str(first["season"]),
         "last_season": str(last["season"]),
@@ -35,6 +38,12 @@ def three_point_summary(trend: pd.DataFrame) -> dict[str, float | str]:
         "last_attempts": float(last["avg_three_pa_per_team_game"]),
         "first_share_pct": float(first["three_pa_share_pct"]),
         "last_share_pct": float(last["three_pa_share_pct"]),
+        "first_games_in_database": int(first["games_in_database"]),
+        "first_games_with_3pa_data": int(first["games_with_3pa_data"]),
+        "first_games_with_complete_attempts": int(
+            first["games_with_complete_attempts"]
+        ),
+        "first_coverage_pct": float(first["three_pa_data_coverage_pct"]),
         "attempts_multiple": float(
             last["avg_three_pa_per_team_game"]
             / first["avg_three_pa_per_team_game"]
