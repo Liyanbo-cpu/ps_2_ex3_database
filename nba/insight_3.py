@@ -1,13 +1,19 @@
 """Data analysis for Insight 3: close NBA games."""
 
 import sqlite3
+from pathlib import Path
 
 import pandas as pd
 
 
+INSIGHT_3_SQL = (
+    Path(__file__).resolve().parent.parent / "queries" / "insight_3.sql"
+)
+
+
 def close_game_trend(
     connection: sqlite3.Connection,
-    query: str,
+    query: str | None = None,
 ) -> pd.DataFrame:
     """
     Calculate the share of close games in each NBA season.
@@ -45,6 +51,9 @@ def close_game_trend(
 
     if duplicate is not None:
         raise ValueError(f"Duplicate eligible game ID: {duplicate[0]}")
+
+    if query is None:
+        query = INSIGHT_3_SQL.read_text(encoding="utf-8")
 
     result = pd.read_sql_query(query, connection)
 
